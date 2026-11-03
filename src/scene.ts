@@ -1,16 +1,18 @@
 import * as THREE from 'three';
 
 /* ============================================================
-   THE VERIFICATION PIPELINE — hero scene
+   THE VERIFICATION PIPELINE — cinematic hero scene
    STUDENT → UPI → WEBHOOK → DATABASE → ADMIN
    Counters are illustrative demo only.
+
+   Every visual serves the pipeline story: energy flowing through
+   the tube, the webhook catching fakes, verified payments landing.
+   No decorative extras.
 
    Performance notes:
    - loaded lazily (see main.ts) so text paints before Three.js
    - render loop pauses when hero is off-screen or tab hidden
-   - low-power profile on phones / weak CPUs (no AA, no point lights,
-     fewer particles, lower pixel ratio)
-   - raycasting only when the pointer actually moved
+   - low-power profile on phones / weak CPUs
    - motion toggle + prefers-reduced-motion respected
    ============================================================ */
 
@@ -40,8 +42,8 @@ function glowTexture(): THREE.Texture {
   c.width = c.height = 128;
   const ctx = c.getContext('2d')!;
   const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-  g.addColorStop(0, 'rgba(255,255,255,0.85)');
-  g.addColorStop(0.35, 'rgba(255,255,255,0.28)');
+  g.addColorStop(0, 'rgba(255,255,255,0.9)');
+  g.addColorStop(0.35, 'rgba(255,255,255,0.3)');
   g.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, 128, 128);
@@ -81,19 +83,37 @@ export function initScene(): void {
   let motion = loadMotionPref();
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x05070f, 0.026);
+  scene.fog = new THREE.FogExp2(0x05070f, 0.022);
 
   const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
   camera.position.set(0, 1.6, 14.5);
 
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, LOW ? 1.5 : 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.15;
+  renderer.toneMappingExposure = 1.25;
 
-  scene.add(new THREE.AmbientLight(0x8899ff, LOW ? 0.8 : 0.55));
-  const dir = new THREE.DirectionalLight(0xffffff, 1.4);
+  scene.add(new THREE.AmbientLight(0x8899ff, LOW ? 0.8 : 0.6));
+  const dir = new THREE.DirectionalLight(0xffffff, 1.5);
   dir.position.set(5, 9, 7);
   scene.add(dir);
+  const rim = new THREE.DirectionalLight(0x38e1ff, 0.7);
+  rim.position.set(-6, 3, -4);
+  scene.add(rim);
+
+  // ---- faint depth dust: dim, sparse, far behind the pipeline ----
+  {
+    const n = LOW ? 120 : 260;
+    const pos = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) {
+      pos[i * 3] = (Math.random() - 0.5) * 70;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 40;
+      pos[i * 3 + 2] = -16 - Math.random() * 30;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const m = new THREE.PointsMaterial({ color: 0x5a6f9e, size: 0.07, transparent: true, opacity: 0.45, sizeAttenuation: true });
+    scene.add(new THREE.Points(g, m));
+  }
 
   // ---- nodes ----
   const glowTex = glowTexture();
@@ -109,26 +129,33 @@ export function initScene(): void {
     positions.push(p);
 
     const mat = new THREE.MeshStandardMaterial({
-      color: def.color, emissive: def.color, emissiveIntensity: LOW ? 0.75 : 0.5,
-      roughness: 0.32, metalness: 0.55,
+      color: def.color, emissive: def.color, emissiveIntensity: LOW ? 0.85 : 0.62,
+      roughness: 0.28, metalness: 0.6,
     });
     const mesh = new THREE.Mesh(def.makeGeo(), mat);
     mesh.position.copy(p);
     mesh.userData.nodeIndex = i;
     scene.add(mesh);
 
-    const glow = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: glowTex, color: def.color, transparent: true, opacity: 0.4,
+    // layered glow: tight hot core + wide soft halo
+    const core = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: glowTex, color: def.color, transparent: true, opacity: 0.55,
       blending: THREE.AdditiveBlending, depthWrite: false,
     }));
-    glow.scale.setScalar(3.4);
-    glow.position.copy(p);
-    scene.add(glow);
+    core.scale.setScalar(2.2);
+    core.position.copy(p);
+    scene.add(core);
+    const halo = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: glowTex, color: def.color, transparent: true, opacity: 0.22,
+      blending: THREE.AdditiveBlending, depthWrite: false,
+    }));
+    halo.scale.setScalar(5.2);
+    halo.position.copy(p);
+    scene.add(halo);
 
-    // point lights are the most expensive part on weak GPUs — skip on LOW
     if (!LOW) {
-      const light = new THREE.PointLight(def.color, 14, 13, 2);
-      light.position.copy(p).add(new THREE.Vector3(0, 0.6, 1.4));
+      const light = new THREE.PointLight(def.color, 16, 14, 2);
+      light.position.copy(p).add(new THREE.Vector3(0, 0.6, 1.6));
       scene.add(light);
     }
 
@@ -143,27 +170,46 @@ export function initScene(): void {
   // ---- luminous tube linking the nodes ----
   const curve = new THREE.CatmullRomCurve3(positions);
   {
-    const tubeGeo = new THREE.TubeGeometry(curve, LOW ? 70 : 120, 0.075, LOW ? 8 : 12, false);
+    const tubeGeo = new THREE.TubeGeometry(curve, LOW ? 80 : 140, 0.085, LOW ? 8 : 12, false);
     const tubeMat = new THREE.MeshBasicMaterial({
-      color: 0x2dd4ff, transparent: true, opacity: 0.32,
+      color: 0x35d8ff, transparent: true, opacity: 0.4,
       blending: THREE.AdditiveBlending, depthWrite: false,
     });
     scene.add(new THREE.Mesh(tubeGeo, tubeMat));
   }
 
+  // ---- energy flow: bright motes streaming through the tube (money moving) ----
+  interface Flow { mesh: THREE.Mesh; t: number; speed: number; }
+  const flows: Flow[] = [];
+  {
+    const g = new THREE.SphereGeometry(0.07, 8, 8);
+    const m = new THREE.MeshBasicMaterial({
+      color: 0xbdf3ff, transparent: true, opacity: 0.85,
+      blending: THREE.AdditiveBlending, depthWrite: false,
+    });
+    const count = LOW ? 16 : 30;
+    for (let i = 0; i < count; i++) {
+      const mesh = new THREE.Mesh(g, m);
+      const f: Flow = { mesh, t: Math.random(), speed: 0.05 + Math.random() * 0.06 };
+      mesh.position.copy(curve.getPointAt(f.t));
+      flows.push(f);
+      scene.add(mesh);
+    }
+  }
+
   // ---- pulses ----
   interface Pulse { mesh: THREE.Mesh; halo: THREE.Sprite; t: number; speed: number; kind: 'good' | 'fake'; }
   const pulses: Pulse[] = [];
-  const pulseGeo = new THREE.SphereGeometry(0.16, 14, 14);
+  const pulseGeo = new THREE.SphereGeometry(0.17, 14, 14);
 
   function spawnPulse(kind: 'good' | 'fake'): void {
     const color = kind === 'good' ? 0x4dff9d : 0xff3b5c;
     const mesh = new THREE.Mesh(pulseGeo, new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.95 }));
     const halo = new THREE.Sprite(new THREE.SpriteMaterial({
-      map: glowTex, color, transparent: true, opacity: 0.7,
+      map: glowTex, color, transparent: true, opacity: 0.75,
       blending: THREE.AdditiveBlending, depthWrite: false,
     }));
-    halo.scale.setScalar(1.1);
+    halo.scale.setScalar(1.2);
     mesh.add(halo);
     mesh.position.copy(curve.getPointAt(0));
     scene.add(mesh);
@@ -179,9 +225,9 @@ export function initScene(): void {
   // ---- shard bursts (fake receipts rejected at the webhook) ----
   interface Shard { mesh: THREE.Mesh; vel: THREE.Vector3; life: number; }
   const shards: Shard[] = [];
-  const shardGeo = new THREE.TetrahedronGeometry(0.1);
+  const shardGeo = new THREE.TetrahedronGeometry(0.11);
   function shardBurst(at: THREE.Vector3, color: number): void {
-    const n = LOW ? 12 : 26;
+    const n = LOW ? 14 : 30;
     for (let i = 0; i < n; i++) {
       const m = new THREE.Mesh(shardGeo, new THREE.MeshBasicMaterial({
         color, transparent: true, opacity: 1,
@@ -189,7 +235,7 @@ export function initScene(): void {
       }));
       m.position.copy(at);
       const v = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5)
-        .normalize().multiplyScalar(2.4 + Math.random() * 3.2);
+        .normalize().multiplyScalar(2.6 + Math.random() * 3.4);
       shards.push({ mesh: m, vel: v, life: 1 });
       scene.add(m);
     }
@@ -219,9 +265,9 @@ export function initScene(): void {
   verifyBtn.addEventListener('click', () => spawnPulse('good'));
 
   // ---- interaction: hover + click ----
-  const mouse = new THREE.Vector2(0, 0);
   const raycaster = new THREE.Raycaster();
   const pointerNDC = new THREE.Vector2(-10, -10);
+  const mouse = new THREE.Vector2(0, 0);
   let hovered: number | null = null;
   let pickDirty = false;
 
@@ -238,15 +284,16 @@ export function initScene(): void {
     if (hovered === 0) spawnPulse('good');
   });
 
-  // ---- loop state (declared early: resize/start use it) ----
+  // ---- loop state ----
   const clock = new THREE.Clock();
   let raf = 0;
   let inView = true;
   let tabVisible = !document.hidden;
   let renderOnce = true;
   let lastFake = 0;
+  let lastGood = 0;
 
-  // ---- resize (ResizeObserver; avoids reflow thrash on mobile URL-bar changes) ----
+  // ---- resize ----
   let lastW = 0;
   let lastH = 0;
   function resize(): void {
@@ -257,11 +304,9 @@ export function initScene(): void {
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     if (w >= 1000) {
-      // desktop: headline sits on the left, so push the pipeline to the right
       camera.position.z = 14.5 * 1.42;
       camera.setViewOffset(w, h, -w * 0.17, 0, w, h);
     } else {
-      // stacked layout: pull the camera back so all 5 nodes fit
       camera.position.z = 14.5 * Math.max(1, 1.6 / camera.aspect);
       camera.clearViewOffset();
     }
@@ -287,10 +332,9 @@ export function initScene(): void {
   }
 
   // ---- loop control: only run while visible ----
-
   function start(): void {
     if (raf || !inView || !tabVisible) return;
-    clock.getDelta(); // discard the paused gap
+    clock.getDelta();
     raf = requestAnimationFrame(tick);
   }
   function stop(): void {
@@ -331,7 +375,6 @@ export function initScene(): void {
     const dt = Math.min(clock.getDelta(), 0.05);
     const t = clock.elapsedTime;
 
-    // hover pick (only when the pointer moved)
     if (pickDirty) {
       pickDirty = false;
       raycaster.setFromCamera(pointerNDC, camera);
@@ -340,16 +383,30 @@ export function initScene(): void {
       canvas.style.cursor = hovered !== null ? 'pointer' : 'default';
     }
 
-    // nodes: idle float + spin (only with motion on) + hover scale
+    // nodes: gentle cinematic float + slow spin, staggered
     let scaling = false;
     nodes.forEach((n, i) => {
-      const target = hovered === i ? 1.3 : 1;
+      if (motion) {
+        n.mesh.rotation.x += dt * 0.35;
+        n.mesh.rotation.y += dt * (0.3 + i * 0.06);
+        n.mesh.position.y = n.baseY + Math.sin(t * 0.9 + n.phase) * 0.22;
+      }
+      const target = hovered === i ? 1.28 : 1;
       const cur = n.mesh.scale.x;
       if (Math.abs(cur - target) > 0.002) {
         n.mesh.scale.setScalar(THREE.MathUtils.lerp(cur, target, 0.12));
         scaling = true;
       }
     });
+
+    // energy flow along the tube
+    if (motion) {
+      for (const f of flows) {
+        f.t += f.speed * dt;
+        if (f.t > 1) f.t -= 1;
+        f.mesh.position.copy(curve.getPointAt(f.t));
+      }
+    }
 
     // pulses
     const webhookT = 2 / (NODE_DEFS.length - 1);
@@ -403,15 +460,23 @@ export function initScene(): void {
       }
     }
 
-    // auto fake-receipts (only with motion on)
+    // the story tells itself: fakes probe the webhook, payments verify
     if (motion && t - lastFake > 7) {
       lastFake = t;
       spawnPulse('fake');
     }
+    if (motion && t - lastGood > 13) {
+      lastGood = t;
+      spawnPulse('good');
+    }
 
+    // slow cinematic camera drift + gentle mouse parallax
+    if (motion) {
+      camera.position.x = THREE.MathUtils.lerp(camera.position.x, Math.sin(t * 0.12) * 0.9 + mouse.x * 1.1, 0.04);
+      camera.position.y = THREE.MathUtils.lerp(camera.position.y, 1.6 + Math.cos(t * 0.09) * 0.35 + mouse.y * 0.6, 0.04);
+    }
     camera.lookAt(0, 0.2, 0);
 
-    // idle? render one last frame, then sleep until something wakes us
     const active = motion || scaling || pulses.length > 0 || shards.length > 0 || rings.length > 0;
     if (!active && !renderOnce) { stop(); return; }
     renderOnce = false;
@@ -420,8 +485,7 @@ export function initScene(): void {
     renderer.render(scene, camera);
   }
 
-  // one demo pulse so the scene isn't static on load (also under reduced motion,
-  // so the counters don't sit at 0)
+  // one demo pulse so the scene isn't static on load
   setTimeout(() => spawnPulse('good'), 1200);
   start();
 }

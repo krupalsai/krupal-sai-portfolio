@@ -1,4 +1,5 @@
 import './style.css';
+import { initReveal } from './reveal';
 
 // Text + layout paint first. The heavy Three.js scene loads afterwards,
 // in a separate chunk, once the browser is idle.
@@ -19,19 +20,6 @@ function boot(): void {
   });
 }
 
-if (document.readyState === 'complete') boot();
-else window.addEventListener('load', boot, { once: true });
+if (document.readyState === 'complete') { boot(); initReveal(); }
+else { window.addEventListener('DOMContentLoaded', initReveal, { once: true }); window.addEventListener('load', boot, { once: true }); }
 
-// Production lab: loaded only when the section is about to be seen
-{
-  const root = document.getElementById('labRoot');
-  if (root) {
-    let done = false;
-    const load = () => {
-      if (done) return; done = true;
-      import('./lab').then((l) => l.initLab(root)).catch(() => { root.textContent = 'The lab failed to load.'; });
-    };
-    new IntersectionObserver((e) => { if (e[0].isIntersecting) load(); }, { rootMargin: '600px' }).observe(root);
-    if (location.hash === '#lab') load();
-  }
-}
