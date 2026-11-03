@@ -22,11 +22,12 @@
   <meta name="twitter:image" content="%VITE_SITE_URL%og.png" />
 </head>
 <body>
+    <div class="aurora" aria-hidden="true"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+    <div class="grain" aria-hidden="true"></div>
   <header class="nav">
     <a class="brand" href="#top">KS<span class="dot">.</span></a>
     <nav class="links">
       <a href="#work">Work</a>
-      <a href="#lab">Lab</a>
       <a href="#about">About</a>
       <a href="#journey">Journey</a>
       <a href="#skills">Skills</a>
@@ -58,11 +59,18 @@
           <div class="counter"><span class="num" id="verifiedCount">0</span><span class="lbl">payments verified</span></div>
           <div class="counter"><span class="num bad" id="fakesCount">0</span><span class="lbl">fake receipts blocked</span></div>
         </div>
-        <p class="demo-note">Illustrative demo, not live platform data. <a href="#lab">Open the full lab →</a></p>
+        <p class="demo-note">Illustrative demo, not live platform data.</p>
       </div>
       <button class="motion-toggle" id="motionToggle" type="button" aria-pressed="true" hidden>Motion: on</button>
       <a class="scroll-hint" href="#work" aria-label="Scroll to work">↓</a>
     </section>
+
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span>TypeScript</span><i>·</i><span>Next.js</span><i>·</i><span>Supabase</span><i>·</i><span>PostgreSQL</span><i>·</i><span>Razorpay</span><i>·</i><span>PhonePe</span><i>·</i><span>HMAC webhooks</span><i>·</i><span>Vercel</span><i>·</i><span>WhatsApp bots</span><i>·</i><span>150+ live users</span><i>·</i>
+        <span>TypeScript</span><i>·</i><span>Next.js</span><i>·</i><span>Supabase</span><i>·</i><span>PostgreSQL</span><i>·</i><span>Razorpay</span><i>·</i><span>PhonePe</span><i>·</i><span>HMAC webhooks</span><i>·</i><span>Vercel</span><i>·</i><span>WhatsApp bots</span><i>·</i><span>150+ live users</span><i>·</i>
+      </div>
+    </div>
 
     <!-- SELECTED WORK -->
     <section class="section" id="work">
@@ -112,17 +120,9 @@
       </div>
     </section>
 
-    <!-- PRODUCTION LAB -->
-    <section class="section" id="lab">
-      <p class="kicker"><span class="kn">02</span>Production lab</p>
-      <h2>Break it yourself.</h2>
-      <p class="prose">A working model of how every payment is verified. Pay, forge a receipt, tamper an amount, drop a webhook, then reconcile. Real HMAC-SHA256 runs in your browser.</p>
-      <div id="labRoot" class="lab"><p class="note">Loading the lab…</p></div>
-    </section>
-
     <!-- ABOUT -->
     <section class="section" id="about">
-      <p class="kicker"><span class="kn">03</span>About</p>
+      <p class="kicker"><span class="kn">02</span>About</p>
       <h2>Builder, operator, owner.</h2>
       <div class="prose">
         <p>
@@ -141,7 +141,7 @@
 
     <!-- JOURNEY -->
     <section class="section" id="journey">
-      <p class="kicker"><span class="kn">04</span>Journey</p>
+      <p class="kicker"><span class="kn">03</span>Journey</p>
       <h2>How I got here.</h2>
       <ol class="timeline">
         <li>
@@ -169,7 +169,7 @@
 
     <!-- SKILLS -->
     <section class="section" id="skills">
-      <p class="kicker"><span class="kn">05</span>Skills</p>
+      <p class="kicker"><span class="kn">04</span>Skills</p>
       <h2>What I work with.</h2>
       <div class="skill-groups">
         <div class="skill-group">
@@ -205,7 +205,7 @@
 
     <!-- CONTACT -->
     <section class="section" id="contact">
-      <p class="kicker"><span class="kn">06</span>Contact</p>
+      <p class="kicker"><span class="kn">05</span>Contact</p>
       <h2>Have an interesting problem?</h2>
       <p class="prose">I'm open to AI/ML roles and to conversations about building real things.</p>
       <p class="email-line"><a href="mailto:krupal.saikss.655@gmail.com">krupal.saikss.655@gmail.com</a></p>
