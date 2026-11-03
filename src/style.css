@@ -87,8 +87,8 @@ body {
   color: #04121a; border: none;
   box-shadow: 0 0 24px rgba(56, 225, 255, 0.35);
 }
-.btn.primary:hover { transform: translateY(-2px); box-shadow: 0 0 34px rgba(56, 225, 255, 0.55); }
-.btn.primary:active { transform: translateY(0) scale(0.98); }
+.btn.primary:hover { box-shadow: 0 0 34px rgba(56, 225, 255, 0.55); }
+
 .btn.ghost { color: var(--text); background: rgba(255,255,255,0.05); }
 .btn.ghost:hover { background: rgba(255,255,255,0.1); }
 
@@ -100,9 +100,8 @@ body {
 .scroll-hint {
   position: absolute; bottom: 1.2rem; left: 50%; transform: translateX(-50%);
   color: var(--muted); text-decoration: none; font-size: 1.4rem; z-index: 2;
-  animation: bob 2.2s ease-in-out infinite;
+  transform: translateX(-50%);
 }
-@keyframes bob { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 8px); } }
 
 /* ---------- sections ---------- */
 .section { scroll-margin-top: 64px; max-width: 1080px; margin: 0 auto; padding: 6rem 1.6rem; }
@@ -115,7 +114,7 @@ body {
   background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
   padding: 1.6rem; transition: transform 0.18s, border-color 0.2s, box-shadow 0.25s;
 }
-.card:hover { transform: translateY(-2px); border-color: rgba(56,225,255,0.35); }
+.card:hover { border-color: rgba(56,225,255,0.35); }
 .card.flagship { border-color: rgba(56,225,255,0.35); background: linear-gradient(160deg, rgba(56,225,255,0.08), rgba(124,107,255,0.06)); }
 .card-tag { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin: 0 0 0.6rem; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .card h3 { margin: 0 0 0.5rem; font-size: 1.35rem; }
@@ -196,5 +195,3 @@ footer { border-top: 1px solid var(--border); margin-top: 4rem; padding: 1.6rem;
 }
 @media (min-width: 1000px) { .tagline { max-width: 30rem; } }
 
-.arr { display: inline-block; transition: transform 0.15s; }
-a:hover .arr, button:hover .arr { transform: translateX(3px); }

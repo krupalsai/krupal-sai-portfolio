@@ -95,21 +95,6 @@ export function initScene(): void {
   dir.position.set(5, 9, 7);
   scene.add(dir);
 
-  // ---- starfield ----
-  {
-    const n = LOW ? 350 : 900;
-    const pos = new Float32Array(n * 3);
-    for (let i = 0; i < n; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 60;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 34;
-      pos[i * 3 + 2] = -12 - Math.random() * 26;
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    const m = new THREE.PointsMaterial({ color: 0xafc4ff, size: 0.09, transparent: true, opacity: 0.8, sizeAttenuation: true });
-    scene.add(new THREE.Points(g, m));
-  }
-
   // ---- nodes ----
   const glowTex = glowTexture();
   interface NodeObj { def: NodeDef; mesh: THREE.Mesh; phase: number; baseY: number; labelEl: HTMLDivElement; }
@@ -164,25 +149,6 @@ export function initScene(): void {
       blending: THREE.AdditiveBlending, depthWrite: false,
     });
     scene.add(new THREE.Mesh(tubeGeo, tubeMat));
-  }
-
-  // ---- ambient drift particles along the tube (shared material) ----
-  interface Drifter { mesh: THREE.Mesh; t: number; speed: number; }
-  const drifters: Drifter[] = [];
-  {
-    const g = new THREE.SphereGeometry(0.05, 8, 8);
-    const m = new THREE.MeshBasicMaterial({
-      color: 0x9be9ff, transparent: true, opacity: 0.5,
-      blending: THREE.AdditiveBlending, depthWrite: false,
-    });
-    const count = LOW ? 18 : 46;
-    for (let i = 0; i < count; i++) {
-      const mesh = new THREE.Mesh(g, m);
-      const d: Drifter = { mesh, t: Math.random(), speed: 0.02 + Math.random() * 0.035 };
-      mesh.position.copy(curve.getPointAt(d.t));
-      drifters.push(d);
-      scene.add(mesh);
-    }
   }
 
   // ---- pulses ----
@@ -252,7 +218,7 @@ export function initScene(): void {
   const verifyBtn = document.getElementById('verifyBtn') as HTMLButtonElement;
   verifyBtn.addEventListener('click', () => spawnPulse('good'));
 
-  // ---- interaction: parallax + hover + click ----
+  // ---- interaction: hover + click ----
   const mouse = new THREE.Vector2(0, 0);
   const raycaster = new THREE.Raycaster();
   const pointerNDC = new THREE.Vector2(-10, -10);
@@ -377,11 +343,6 @@ export function initScene(): void {
     // nodes: idle float + spin (only with motion on) + hover scale
     let scaling = false;
     nodes.forEach((n, i) => {
-      if (motion) {
-        n.mesh.rotation.x += dt * 0.5;
-        n.mesh.rotation.y += dt * (0.4 + i * 0.08);
-        n.mesh.position.y = n.baseY + Math.sin(t * 1.1 + n.phase) * 0.16;
-      }
       const target = hovered === i ? 1.3 : 1;
       const cur = n.mesh.scale.x;
       if (Math.abs(cur - target) > 0.002) {
@@ -389,14 +350,6 @@ export function initScene(): void {
         scaling = true;
       }
     });
-
-    if (motion) {
-      for (const d of drifters) {
-        d.t += d.speed * dt;
-        if (d.t > 1) d.t -= 1;
-        d.mesh.position.copy(curve.getPointAt(d.t));
-      }
-    }
 
     // pulses
     const webhookT = 2 / (NODE_DEFS.length - 1);
@@ -456,11 +409,6 @@ export function initScene(): void {
       spawnPulse('fake');
     }
 
-    // camera parallax
-    if (motion) {
-      camera.position.x = THREE.MathUtils.lerp(camera.position.x, mouse.x * 1.7, 0.045);
-      camera.position.y = THREE.MathUtils.lerp(camera.position.y, 1.6 + mouse.y * 0.9, 0.045);
-    }
     camera.lookAt(0, 0.2, 0);
 
     // idle? render one last frame, then sleep until something wakes us
