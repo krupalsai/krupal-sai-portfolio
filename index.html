@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sai Krupal Kusanapelli — Founder and AI-assisted builder/operator of a live student platform. Portfolio." />
+  <title>Krupal Sai — Builder &amp; Operator</title>
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="#top">KS<span class="dot">.</span></a>
+    <nav class="links">
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+      <a href="#journey">Journey</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact" class="cta">Contact</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <!-- HERO: The Verification Pipeline -->
+    <section class="hero" id="pipeline">
+      <div class="scene-wrap" id="sceneWrap">
+        <canvas id="scene"></canvas>
+        <div class="labels" id="labels"></div>
+        <div class="scene-fallback" id="sceneFallback" hidden>
+          <p>Interactive 3D scene needs WebGL — the story is below.</p>
+        </div>
+      </div>
+      <div class="hero-copy">
+        <p class="kicker">Founder · AI-assisted builder &amp; operator</p>
+        <h1>Sai Krupal<br />Kusanapelli</h1>
+        <p class="tagline">
+          I run a live platform that takes real money from real students —
+          and I built the pipeline that proves every payment.
+        </p>
+        <div class="hero-actions">
+          <button class="btn primary" id="verifyBtn" type="button">Verify a payment</button>
+          <a class="btn ghost" href="#work">See the work</a>
+        </div>
+        <div class="counters">
+          <div class="counter"><span class="num" id="verifiedCount">0</span><span class="lbl">payments verified</span></div>
+          <div class="counter"><span class="num bad" id="fakesCount">0</span><span class="lbl">fake receipts blocked</span></div>
+        </div>
+        <p class="demo-note">Illustrative demo, not live platform data.</p>
+      </div>
+      <a class="scroll-hint" href="#work" aria-label="Scroll to work">↓</a>
+    </section>
+
+    <!-- SELECTED WORK -->
+    <section class="section" id="work">
+      <p class="kicker">Selected work</p>
+      <h2>Things I actually run.</h2>
+      <div class="cards">
+        <article class="card flagship">
+          <p class="card-tag">Flagship · Live</p>
+          <h3>Student Platform</h3>
+          <p class="card-line">A live platform serving <strong>150+ students</strong> across 2 colleges — built with AI assistance, operated by me.</p>
+          <ul>
+            <li><strong>150+ REST API routes</strong> — Next.js + Supabase/PostgreSQL on Vercel</li>
+            <li><strong>Automated webhook verification</strong> for Razorpay / PhonePe / Cashfree — kills fake-receipt fraud</li>
+            <li>WhatsApp support bot with one-time login links</li>
+            <li>Udyam-registered business: <strong>STUDENT PLATFORM GREY</strong></li>
+          </ul>
+          <p class="card-foot">I own integration, testing, deployment, payments and live ops.</p>
+        </article>
+        <article class="card">
+          <p class="card-tag">AI · Live API</p>
+          <h3>Query Agent</h3>
+          <p class="card-line">A RAG assistant that answers from real documents — nothing hallucinated.</p>
+          <ul>
+            <li>Retrieval with <strong>LangChain + ChromaDB</strong></li>
+            <li><strong>Gemini API</strong> with multi-provider fallback chain</li>
+            <li>Live serverless API on Vercel</li>
+          </ul>
+        </article>
+        <article class="card">
+          <p class="card-tag">Hackathon</p>
+          <h3>FeeDesk AI</h3>
+          <p class="card-line">Fee-tracking build for the PayPal hackathon (Business Solutions).</p>
+          <ul>
+            <li><strong>36/36 tests passing</strong></li>
+            <li>Mock-mode build, demo-ready</li>
+          </ul>
+        </article>
+        <article class="card">
+          <p class="card-tag">Experimental</p>
+          <h3>Voice Infra</h3>
+          <p class="card-line">Self-hosted voicebot experiment — honestly labeled, not production.</p>
+          <ul>
+            <li>Oracle Cloud VM over Tailscale</li>
+            <li>Piper TTS voice pipeline</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section" id="about">
+      <p class="kicker">About</p>
+      <h2>Builder, operator, owner.</h2>
+      <div class="prose">
+        <p>
+          I'm Krupal. I build with AI and operate like an owner. I don't hand-write
+          every line — I integrate, test, deploy, and keep real systems alive for
+          real users: payments, databases, bots, deploys, and the occasional 2&nbsp;AM
+          incident.
+        </p>
+        <p>
+          My platform is my question paper: every interview answer I give comes from
+          something I've actually run in production. If I can't explain it, I don't
+          claim it.
+        </p>
+      </div>
+    </section>
+
+    <!-- JOURNEY -->
+    <section class="section" id="journey">
+      <p class="kicker">Journey</p>
+      <h2>How I got here.</h2>
+      <ol class="timeline">
+        <li>
+          <span class="t-year">2025</span>
+          <div><strong>B.Tech, Computer Science</strong> — GNIT Hyderabad.<br />Graduated, then chose building over just studying.</div>
+        </li>
+        <li>
+          <span class="t-year">2025</span>
+          <div><strong>Built &amp; launched the Student Platform</strong> — from Google Forms + manual UPI to a live platform with 150+ students and automated payments.</div>
+        </li>
+        <li>
+          <span class="t-year">2025</span>
+          <div><strong>Registered the business</strong> — STUDENT PLATFORM GREY (Udyam, micro-enterprise). Real compliance, real payment gateways.</div>
+        </li>
+        <li>
+          <span class="t-year">2026</span>
+          <div><strong>Shipped the Query Agent</strong> (RAG assistant, live API) and <strong>FeeDesk AI</strong> (hackathon build, 36/36 tests).</div>
+        </li>
+        <li>
+          <span class="t-year">Now</span>
+          <div><strong>Targeting AI/ML roles</strong> — preparing to defend every line in interviews.</div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="section" id="skills">
+      <p class="kicker">Skills</p>
+      <h2>What I work with.</h2>
+      <div class="skill-groups">
+        <div class="skill-group">
+          <h3>Languages</h3>
+          <p>TypeScript / JavaScript — daily production use (AI-assisted) · Python · SQL — daily production use</p>
+        </div>
+        <div class="skill-group">
+          <h3>Frontend</h3>
+          <p>Next.js · React · Vite · Tailwind CSS · PWA</p>
+        </div>
+        <div class="skill-group">
+          <h3>Backend &amp; APIs</h3>
+          <p>REST API design (150+ routes) · Node.js · Webhooks with HMAC verification · Supabase / PostgreSQL</p>
+        </div>
+        <div class="skill-group">
+          <h3>Cloud &amp; DevOps</h3>
+          <p>Vercel · Oracle Cloud · Tailscale · Git / GitHub · Linux operations</p>
+        </div>
+        <div class="skill-group">
+          <h3>Payments</h3>
+          <p>Razorpay · PhonePe · Cashfree integrations · Automated reconciliation · Fake-receipt fraud handling</p>
+        </div>
+        <div class="skill-group">
+          <h3>AI / ML</h3>
+          <p>RAG (LangChain + ChromaDB) · Gemini API · Prompt design · Multi-provider fallback chains</p>
+        </div>
+        <div class="skill-group learning">
+          <h3>Currently learning</h3>
+          <p>Data structures &amp; algorithms · ML system design · GenAI depth (transformers, evals, agents)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section" id="contact">
+      <p class="kicker">Contact</p>
+      <h2>Have an interesting problem?</h2>
+      <p class="prose">I'm open to AI/ML roles and to conversations about building real things.</p>
+      <div class="contact-row">
+        <a class="btn primary" href="mailto:krupal.saikss.655@gmail.com">Email me</a>
+        <a class="btn ghost" href="https://linkedin.com/in/krupal-sai" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn ghost" href="https://github.com/krupalsai" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 Sai Krupal Kusanapelli · Built with TypeScript, Vite &amp; Three.js · Hosted on GitHub Pages</p>
+  </footer>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
